@@ -246,11 +246,21 @@ async function createNew(_context, isRenameTemplate) {
       /**
        * The `target` can be fileText or filename or directoryName
        */
-      return Object
+      const res = Object
         .keys(replaceValues)
         .reduce((ret, name) => {
-          return ret.replace(RegExp(`\\$\\$var_${name}`, 'g'), replaceValues[name]);
+          return ret
+            .replace(RegExp(`\\$\\$var_${name}`, 'g'), replaceValues[name])
+            });
         }, target);
+
+    return res.replace(/\$\$changeCase\(([^,]+),([^)]+)\)/g), (match,p1,p2)=>{
+             if(match){
+                 const caseKey = p1.replace(/['"]/g,'')
+               if(caseKey){
+                 return changeCase[caseKey](p2)
+               }
+              }
     }
     /**
      * In order to reduce the complexity of the source code during maintenance, 
